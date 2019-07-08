@@ -15,7 +15,8 @@ namespace search_difference_array
         {
             var set = new int[] { 12, 9, 7, 5, 3, 2, 1 };
             var resultSet = new List<dynamic>();
-            var diff = 2;
+            var diffsDict = new Dictionary<int, int>();
+            int diff = 2;
             int result;
             int ite = 0;
 
@@ -32,12 +33,7 @@ namespace search_difference_array
                 }
             }
 
-            Console.WriteLine(ite);
-            foreach (var pair in resultSet)
-            {
-                Console.WriteLine(pair);
-            }
-
+            PrintResults(new { Iterations = ite, ResultSet = resultSet });
             ite = 0;
             resultSet.Clear();
 
@@ -54,8 +50,30 @@ namespace search_difference_array
                 }
             }
 
-            Console.WriteLine(ite);
-            foreach(var pair in resultSet)
+            PrintResults(new { Iterations = ite, ResultSet = resultSet });
+            ite = 0;
+            resultSet.Clear();
+
+            for(int k = 0; k < set.Length; k++)
+            {
+                ite++;
+                if(diffsDict.TryGetValue(set[k], out int idx))
+                {
+                    resultSet.Add(new { A = set[k], B = set[idx] });
+                    continue;
+                }
+
+                result = set[k] - diff;
+                diffsDict.Add(result, k);
+            }
+
+            PrintResults(new { Iterations = ite, ResultSet = resultSet });
+        }
+
+        private void PrintResults(dynamic obj)
+        {
+            Console.WriteLine(obj.Iterations);
+            foreach (var pair in obj.ResultSet)
             {
                 Console.WriteLine(pair);
             }
