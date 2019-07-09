@@ -14,10 +14,11 @@ namespace search_difference_array
         private void Start()
         {
             var set = new int[] { 12, 9, 7, 5, 3, 2, 1 };
+            // var set = new int[] { 6, 3, 5, 2, 4 };
             var resultSet = new List<dynamic>();
-            var diffsDict = new Dictionary<int, int>();
+            var diffsDict = new Dictionary<int, List<int>>();
             int diff = 2;
-            int result;
+            int subResult, sumResult;
             int ite = 0;
 
             for (int i = 0; i < set.Length; i++)
@@ -25,8 +26,8 @@ namespace search_difference_array
                 for (int j = 0; j < set.Length; j++)
                 {
                     ite++;
-                    result = set[i] - set[j];
-                    if (result == diff)
+                    subResult = set[i] - set[j];
+                    if (subResult == diff)
                     {
                         resultSet.Add(new { A = set[i], B = set[j] });
                     }
@@ -42,8 +43,8 @@ namespace search_difference_array
                 for(int j = i; j < set.Length; j++)
                 {
                     ite++;
-                    result = set[i] - set[j];
-                    if (Math.Abs(result) == diff)
+                    subResult = set[i] - set[j];
+                    if (Math.Abs(subResult) == diff)
                     {
                         resultSet.Add(new { A = set[i], B = set[j] });
                     }
@@ -57,14 +58,34 @@ namespace search_difference_array
             for(int k = 0; k < set.Length; k++)
             {
                 ite++;
-                if(diffsDict.TryGetValue(set[k], out int idx))
+                if(diffsDict.TryGetValue(set[k], out List<int> idxs))
                 {
-                    resultSet.Add(new { A = set[k], B = set[idx] });
+                    foreach(var idx in idxs)
+                    {
+                        resultSet.Add(new { A = set[k], B = set[idx] });
+                    }
                     continue;
                 }
 
-                result = set[k] - diff;
-                diffsDict.Add(result, k);
+                subResult = set[k] - diff;
+                sumResult = set[k] + diff;
+
+                if(diffsDict.ContainsKey(subResult)){
+                    diffsDict[subResult].Add(k);
+                }
+                else
+                {
+                    diffsDict.Add(subResult, new List<int> { k });
+                }
+
+                if (diffsDict.ContainsKey(sumResult))
+                {
+                    diffsDict[sumResult].Add(k);
+                }
+                else
+                {
+                    diffsDict.Add(sumResult, new List<int> { k });
+                }
             }
 
             PrintResults(new { Iterations = ite, ResultSet = resultSet });
